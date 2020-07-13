@@ -10,14 +10,11 @@
 
     <script type="text/javascript">
       document.addEventListener("DOMContentLoaded", function () {
-        let app = document.getElementById("todo-app");
-        let items = app.getElementsByClassName("item");
+        const app = document.getElementById("todo-app");
 
-        for (let item of items) {
-          item.addEventListener("click", function () {
-            alert("you clicked on item: " + item.innerHTML);
-          });
-        }
+        app.addEventListener("click", function ({ target: { innerHTML } }) {
+          alert("you clicked on item: " + innerHTML);
+        });
       });
     </script>
   </body>
