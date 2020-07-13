@@ -1,0 +1,28 @@
+<html>
+  <head> </head>
+  <body>
+    <script type="text/javascript">
+      // NOTE: I tried to also use web worker, but project had to be hosted (worker cant be used with file protocol), so I gave up. I think debounce is enough :)
+      const debounce = (fn, time) => {
+        let timeout;
+
+        return function () {
+          const functionCall = () => fn.apply(this, arguments);
+
+          clearTimeout(timeout);
+          timeout = setTimeout(functionCall, time);
+        };
+      };
+
+      document.addEventListener(
+        "mousemove",
+        debounce(() => {
+          // simulation of non critical taxing task
+          for (let i = 0; i < 9999; i++) {
+            console.log(i);
+          }
+        }, 300)
+      );
+    </script>
+  </body>
+</html>

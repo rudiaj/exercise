@@ -48,7 +48,7 @@
         const debounce = (fn, time) => {
           let timeout;
 
-          return function (asc) {
+          return function () {
             const functionCall = () => fn.apply(this, arguments);
 
             clearTimeout(timeout);
