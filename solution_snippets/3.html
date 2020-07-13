@@ -1,0 +1,19 @@
+<html>
+  <head></head>
+  <body>
+    <script type="text/javascript">
+      const magnitude = (cordinates = []) => {
+        return cordinates.length
+          ? cordinates.reduce((accumulator, currentValue) =>
+              Math.sqrt(accumulator ** 2 + currentValue ** 2)
+            )
+          : 0;
+      };
+
+      console.log(magnitude([3, 4]));
+      console.log(magnitude([0, 0, -10]));
+      console.log(magnitude([]));
+      console.log(magnitude([2, 3, 6, 1, 8]));
+    </script>
+  </body>
+</html>
