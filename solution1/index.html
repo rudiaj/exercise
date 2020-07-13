@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solution 1</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        let output = [];
+        let sortAsc = true;
+
+        const tbody = document.querySelector("#tbody");
+        const idFilter = document.querySelector("#id-filter");
+        const firstName = document.querySelector("#first-name");
+        const lastName = document.querySelector("#last-name");
+
+        const generateList = (data) => {
+          const result = data
+            .map((item) => {
+              const date = new Date(item.updated);
+              return `
+          <tr>
+            <td>${item.id}</td>
+            <td>${item.firstName}</td>
+            <td>${item.lastName}</td>
+            <td>${
+              item.active
+                ? `<span class="text-success">Active</span>`
+                : `<span class="text-danger">Inactive</span>`
+            }</td>
+            <td>${date.toDateString()}</td>
+          </tr>
+          `;
+            })
+            .join("");
+
+          tbody.innerHTML = result;
+        };
+
+        const debounce = (fn, time) => {
+          let timeout;
+
+          return function (asc) {
+            const functionCall = () => fn.apply(this, arguments);
+
+            clearTimeout(timeout);
+            timeout = setTimeout(functionCall, time);
+          };
+        };
+
+        const sort = (key) => {
+          const sortResult = output.sort((a, b) =>
+            a[key].localeCompare(b[key])
+          );
+
+          const returnValue = sortAsc ? sortResult : sortResult.reverse();
+          output = returnValue;
+          generateList(returnValue);
+
+          sortAsc = !sortAsc;
+        };
+
+        firstName.addEventListener("click", () => sort("firstName"));
+        lastName.addEventListener("click", () => sort("lastName"));
+
+        idFilter.addEventListener(
+          "input",
+          debounce(({ target: { value } }) => {
+            const filteredData = output.filter(
+              (item) => item.id === Number(value)
+            );
+            generateList(filteredData.length ? filteredData : output);
+          }, 200)
+        );
+
+        const fetchData = () => {
+          fetch(
+            "https://cors-anywhere.herokuapp.com/http://ws-old.parlament.ch/councillors?format=json"
+          )
+            .then((response) => {
+              response.json().then((body) => {
+                output = body;
+                generateList(output);
+              });
+            })
+            .catch((e) => console.log(e));
+        };
+
+        fetchData();
+      });
+    </script>
+
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="input-group input-group-md mt-5 mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="inputGroup-sizing-md"
+                >Filter by ID:</span
+              >
+            </div>
+            <input
+              type="text"
+              id="id-filter"
+              class="form-control"
+              aria-label="Small"
+              aria-describedby="inputGroup-sizing-sm"
+            />
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th id="first-name">First Name</th>
+                  <th id="last-name">Last Name</th>
+                  <th>Status</th>
+                  <th>Last Updated</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
